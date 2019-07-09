@@ -2,8 +2,8 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.user import User, UserRegister, UserLogin, TokenRefresh, TokenExpire
-from resources.termino import TerminoNuevo, TerminosList, Termino
-from resources.examen import ExamenNuevo, ExamenesList, Examen
+from resources.termino import TerminoNuevo, TerminosList, Termino, TerminosResultados
+from resources.examen import ExamenNuevo, ExamenesList, Examen, ExamenNuevo2
 from resources.items import Item, ItemNuevo, ItemsList 
 from flask_cors import CORS
 
@@ -72,16 +72,21 @@ api.add_resource(TokenExpire, "/auth/logout")
 api.add_resource(TerminosList, "/terms")
 api.add_resource(Termino, "/term/<int:id>")
 api.add_resource(TerminoNuevo, "/term")
+api.add_resource(TerminosResultados, "/results")
+
 
 # Exams endpoints
 api.add_resource(ExamenesList, "/exams")
 api.add_resource(Examen, "/exam/<int:id>")
 api.add_resource(ExamenNuevo, "/exam")
+api.add_resource(ExamenNuevo2, "/exam2")
+
 
 # Exam items endpoints
 api.add_resource(ItemsList, "/exam/<int:examen_id>/items")
 api.add_resource(Item, "/exam/<int:examen_id>/<int:termino_id>")
 api.add_resource(ItemNuevo, "/item")
+
 
 # Con uWSGI no pasas por aquí, así que no importas db
 if __name__ == '__main__':

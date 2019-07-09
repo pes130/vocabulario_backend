@@ -1,7 +1,10 @@
 from flask_restful import Resource, reqparse
 from models.examen import ExamenModel
+from models.items import ItemModel
 from flask_jwt_extended import jwt_required, fresh_jwt_required, get_jwt_identity, get_raw_jwt
 from datetime import datetime
+from db import db
+import ast
 
 class ExamenGenerico:
     parser = reqparse.RequestParser()
@@ -73,6 +76,52 @@ class ExamenNuevo(Resource, ExamenGenerico):
         except:
             return {"message": "An error occurred inserting term. "}, 500
         return term.json(), 201  
+
+class ExamenNuevo2(Resource):
+    parser2 = reqparse.RequestParser()
+    parser2.add_argument('fecha',
+        type=str,
+        required=True,
+        help="date of the exam is mandatory"
+    )
+    parser2.add_argument('aciertos',
+        type=int)
+    parser2.add_argument('fallos',
+        type=int)
+    parser2.add_argument('items', action='append')   
+    itemsParser = reqparse.RequestParser() 
+    itemsParser.add_argument('mostrada',
+        type=bool, location=('items',))
+    itemsParser.add_argument('contestada',
+        type=bool, location=('items',))
+    itemsParser.add_argument('termino_id',
+        type=int, location=('items',))
+    itemsParser.add_argument('examen_id',
+        type=int, location=('items',))
+    itemsParser.add_argument('acierto',
+        type=bool, location=('items',))
+    
+  
+    
+    @fresh_jwt_required
+    def post(self):      
+        data = ExamenNuevo2.parser2.parse_args()
+        print(data)
+        fecha = datetime.strptime(data['fecha'], '%d/%m/%Y %H:%M:%S')
+        examen = ExamenModel(fecha, data['aciertos'], data['fallos'],get_jwt_identity())
+        try:
+            examen.save_to_db()
+            id_examen = examen.id
+            print("El id del nuevo examen es ",id_examen)
+            for item_str in data['items']:
+                item = ast.literal_eval(item_str)
+                nuevoItem = ItemModel(item['termino_id'], id_examen, item['acierto'])
+                print(nuevoItem)
+                nuevoItem.save_to_db()
+        except Exception as e:
+            print(e)
+            return {"message": "An error occurred inserting term. "}, 500
+        return examen.json(), 201  
     
 
 class ExamenesList(Resource):

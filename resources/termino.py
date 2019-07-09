@@ -1,7 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.termino import TerminoModel
+from models.examen import ExamenModel
 from flask_jwt_extended import jwt_required, fresh_jwt_required, get_jwt_identity, get_raw_jwt
-
+from resources.models.resultado import TerminoResultado
 
 class TerminoGenerico:
     parser = reqparse.RequestParser()
@@ -97,3 +98,28 @@ class TerminosList(Resource):
         current_user_id = get_jwt_identity()
         terminos = TerminoModel.find_by_user_id(current_user_id)
         return {'terminos': [termino.json() for termino in terminos.all()]}
+
+
+class TerminosResultados(Resource):
+    @jwt_required
+    def get(self):
+        current_user_id = get_jwt_identity()
+        examenes = ExamenModel.find_by_user_id(get_jwt_identity())
+        terminos = TerminoModel.find_by_user_id(current_user_id)
+
+        resultados = {}
+        terminos_dict = {termino.id: termino for termino in terminos.all()}
+        
+        for examen in examenes.all():
+            for pregunta in examen.preguntas:
+                if resultados.get(pregunta.termino_id) is None:
+                    if pregunta.acierto:
+                        resultados[pregunta.termino_id] = TerminoResultado(terminos_dict[pregunta.termino_id].termino, 1, 0)
+                    else:
+                        resultados[pregunta.termino_id] = TerminoResultado(terminos_dict[pregunta.termino_id].termino, 0, 1)
+                else:
+                    if pregunta.acierto:
+                        resultados[pregunta.termino_id].aciertos+=1
+                    else:
+                        resultados[pregunta.termino_id].fallos+=1 
+        return {'resultados': [resultado.json() for resultado in resultados.values()]}

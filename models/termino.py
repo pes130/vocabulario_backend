@@ -40,8 +40,8 @@ class TerminoModel(db.Model):
         return TerminoModel.query.filter_by(termino=termino).first()
 
     @classmethod
-    def find_by_termino_and_user_id(cls, termino, user_id):
-        return TerminoModel.query.filter_by(termino=termino).filter_by(user_id=user_id).first()
+    def find_by_termino_and_user_id(cls, termino_id, user_id):
+        return TerminoModel.query.filter_by(id=termino_id).filter_by(user_id=user_id).first()
 
     def save_to_db(self):
         db.session.add(self)

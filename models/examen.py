@@ -27,7 +27,7 @@ class ExamenModel(db.Model):
 
     @classmethod
     def find_by_user_id(cls, user_id):
-        return ExamenModel.query.filter_by(user_id=user_id)
+        return ExamenModel.query.filter_by(user_id=user_id).order_by(ExamenModel.fecha.desc())
     
     @classmethod
     def find_by_exam_id_and_user_id(cls, exam_id, user_id):
