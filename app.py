@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -12,7 +13,7 @@ CORS(app)
 
 
 
-app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://uservocabulariodb:uservocabulariodb@localhost/vocabulariodb'
+app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DATABASE_URL','sqlite://data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_BLACKLIST_ENABLED'] = True
@@ -21,7 +22,8 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 @app.before_first_request
 def create_tables():
     db.create_all()
-app.secret_key = 's3cr3ti110_12345*'
+    
+app.secret_key = os.environ.get('SECRET_KEY')
 
 api = Api(app)
 jwt = JWTManager(app)
