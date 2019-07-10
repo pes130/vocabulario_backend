@@ -19,9 +19,10 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
-@app.before_first_request
+# Quitar esto para ejecutar desplegado
+""" @app.before_first_request
 def create_tables():
-    db.create_all()
+    db.create_all() """
     
 app.secret_key = os.environ.get('SECRET_KEY')
 
