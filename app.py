@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from resources.user import User, UserRegister, UserLogin, TokenRefresh, TokenExpire
-from resources.termino import TerminoNuevo, TerminosList, Termino, TerminosResultados
+from resources.termino import TerminoNuevo, TerminosPorTipoList, TiposDeTerminos, TerminosList, Termino, TerminosResultados
 from resources.examen import ExamenNuevo, ExamenesList, Examen, ExamenNuevo2
 from resources.items import Item, ItemNuevo, ItemsList 
 from flask_cors import CORS
@@ -76,6 +76,9 @@ api.add_resource(TerminosList, "/terms")
 api.add_resource(Termino, "/term/<int:id>")
 api.add_resource(TerminoNuevo, "/term")
 api.add_resource(TerminosResultados, "/results")
+api.add_resource(TerminosPorTipoList, "/terms/<string:tipo>")
+api.add_resource(TiposDeTerminos, "/types")
+
 
 
 # Exams endpoints

@@ -99,6 +99,20 @@ class TerminosList(Resource):
         terminos = TerminoModel.find_by_user_id(current_user_id)
         return {'terminos': [termino.json() for termino in terminos.all()]}
 
+class TerminosPorTipoList(Resource):
+    @jwt_required
+    def get(self, tipo):
+        current_user_id = get_jwt_identity()
+        terminos = TerminoModel.find_by_tipo_and_user_id(tipo, current_user_id)
+        return {'terminos': [termino.json() for termino in terminos.all()]}
+
+class TiposDeTerminos(Resource):
+    @jwt_required
+    def get(self):
+        current_user_id = get_jwt_identity()
+        tipos = TerminoModel.find_tipos_by_user_id(current_user_id)
+        return {'tipos': [tipo[0] for tipo in tipos.all()]}
+    
 
 class TerminosResultados(Resource):
     @jwt_required

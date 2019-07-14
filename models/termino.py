@@ -43,6 +43,14 @@ class TerminoModel(db.Model):
     def find_by_termino_and_user_id(cls, termino_id, user_id):
         return TerminoModel.query.filter_by(id=termino_id).filter_by(user_id=user_id).first()
 
+    @classmethod
+    def find_by_tipo_and_user_id(cls, tipo, user_id):
+        return TerminoModel.query.filter_by(tipo=tipo).filter_by(user_id=user_id)
+
+    @classmethod
+    def find_tipos_by_user_id(cls, user_id):
+        return TerminoModel.query.filter_by(user_id=user_id).with_entities(TerminoModel.tipo).distinct()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
